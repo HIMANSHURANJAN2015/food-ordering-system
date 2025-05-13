@@ -1,9 +1,7 @@
 package controller;
 
-import exception.UnauthorisedAccessException;
 import model.Customer;
 import service.CustomerService;
-
 import java.util.Scanner;
 
 public class CustomerController {

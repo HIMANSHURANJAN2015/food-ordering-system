@@ -1,16 +1,15 @@
 import controller.CustomerController;
-import controller.MenuItemController;
 import controller.RestaurantController;
+import controller.RestaurantMenuItemController;
 import model.MenuItem;
 import model.Restaurant;
-import repository.CustomerRepository;
-import repository.MenuItemRepository;
-import repository.RestaurantRepository;
-import service.CustomerService;
-import service.MenuItemService;
-import service.RestaurantService;
+import model.RestaurantMenuItem;
+import repository.*;
+import service.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
@@ -19,17 +18,26 @@ public class Main {
 
         //Creating all objects of repositories, service and pass the same everywhere.
         //Kind of mimicking SpringBeans
+        CustomerRepository customerRepository = new CustomerRepository();
         MenuItemRepository menuItemRepository = new MenuItemRepository();
         RestaurantRepository restaurantRepository = new RestaurantRepository();
-        CustomerRepository customerRepository = new CustomerRepository();
+        RestaurantMenuItemRepository restaurantMenuItemRepository = new RestaurantMenuItemRepository();
+        OrderRepository orderRepository = new OrderRepository();
 
-        MenuItemService menuItemService = new MenuItemService(menuItemRepository, restaurantRepository);
-        RestaurantService restaurantService = new RestaurantService(restaurantRepository);
+
         CustomerService customerService = new CustomerService(customerRepository);
+        MenuItemService menuItemService = new MenuItemService(menuItemRepository);
+        RestaurantMenuItemService restaurantMenuItemService = new RestaurantMenuItemService(restaurantMenuItemRepository, restaurantRepository, menuItemRepository);
+        RestaurantService restaurantService = new RestaurantService(restaurantRepository, restaurantMenuItemService);
+        OrderService orderService = new OrderService(orderRepository, customerRepository);
 
-        MenuItemController menuItemController = new MenuItemController(menuItemService);
-        RestaurantController restaurantController = new RestaurantController(restaurantService, menuItemController);
+
+
         CustomerController customerController = new CustomerController(customerService);
+        RestaurantMenuItemController restaurantMenuItemController = new RestaurantMenuItemController(restaurantMenuItemService, menuItemService);
+        RestaurantController restaurantController = new RestaurantController(restaurantService, restaurantMenuItemController);
+
+
 
         Scanner scanner = new Scanner(System.in);
         try {
@@ -49,16 +57,16 @@ public class Main {
                         restaurantController.addRestaurant();
                         break;
                     case 2:
-                        loadRestaurantDetails(restaurantService, menuItemService);
+                        loadRestaurantDetails(restaurantService, restaurantMenuItemService, menuItemService);
                         break;
                     case 3:
                         restaurantController.printRestaurant();
                         break;
                     case 4:
-                        menuItemController.addMenuItem();
+                        restaurantMenuItemController.addRestaurantMenuItem();
                         break;
                     case 5:
-                        menuItemController.updateMenuItem();
+                        restaurantMenuItemController.updateMenuItem();
                         break;
                     case 6:
                         customerController.addCustomer();
@@ -74,29 +82,32 @@ public class Main {
         }
     }
 
-    private static void loadRestaurantDetails(RestaurantService restaurantService, MenuItemService menuItemService) {
+    private static void loadRestaurantDetails(RestaurantService restaurantService, RestaurantMenuItemService restaurantMenuItemService, MenuItemService menuItemService) {
         //Adding restaurant-1
-        Restaurant restaurant1 = restaurantService.addRestaurant("Mitra da dhaba", "WEst Patel Nagar, New Delhi-110008","9876543213", new ArrayList<MenuItem>(), 5, 4.5);
-        menuItemService.addMenuItem(1, "Veg biryani", 100, "Delicious marinated veg biryani with raita");
-        menuItemService.addMenuItem(1, "Chicken biryani", 150, "Delicious marinated chicken biryani with raita");
-        menuItemService.addMenuItem(1, "Jackfruit biryani", 100, "Delicious marinated jackfruit biryani with raita");
-        menuItemService.addMenuItem(1, "Chicken 65 biryani", 210, "Delicious marinated biryani with chinese tadka");
+        Restaurant restaurant1 = restaurantService.addRestaurant("R1", "WEst Patel Nagar, New Delhi-110008","9876543213", new HashMap<>(), 5, 4.5);
+        MenuItem menuItem1 = menuItemService.addMenuItem("Veg biryani", "Delicious marinated veg biryani with raita");
+        RestaurantMenuItem restaurantMenuItem1 = restaurantMenuItemService.addRestaurantMenuItem(restaurant1.getId(), menuItem1.getId(), 100);
+        MenuItem menuItem2 = menuItemService.addMenuItem("Chicken biryani", "Delicious marinated chicken biryani with raita");
+        RestaurantMenuItem restaurantMenuItem2 = restaurantMenuItemService.addRestaurantMenuItem(restaurant1.getId(), menuItem2.getId(), 150);
 
         //Adding restaurant-2
-        Restaurant restaurant2 = restaurantService.addRestaurant("Sagar Foods, ", "BTM Layout 2nd stager, Bangalore-560085","9876543214", new ArrayList<MenuItem>(), 5, 3.5);
-        menuItemService.addMenuItem(2, "Idli", 40, "Idli with sambhar and chutney");
-        menuItemService.addMenuItem(2, "Dosa", 70, "Masala dosa");
-        menuItemService.addMenuItem(2, "Jackfruit biryani", 90, "Delicious marinated jackfruit biryani with raita");
-        menuItemService.addMenuItem(2, "Chicken 65 biryani", 180, "Delicious marinated biryani with chinese tadka");
+        Restaurant restaurant2 = restaurantService.addRestaurant("R2", "BTM laypout, Bangalore-560085","9876543214", new HashMap<>(), 5, 4);
+        MenuItem menuItem3 = menuItemService.addMenuItem("Idli", "Delicious rice idli");
+        RestaurantMenuItem restaurantMenuItem3 = restaurantMenuItemService.addRestaurantMenuItem(restaurant2.getId(), menuItem3.getId(), 10);
+        MenuItem menuItem4 = menuItemService.addMenuItem("Dosa", "Dosa with cocnout chutney and sambhar");
+        RestaurantMenuItem restaurantMenuItem4 = restaurantMenuItemService.addRestaurantMenuItem(restaurant2.getId(), menuItem4.getId(), 50);
+        RestaurantMenuItem restaurantMenuItem5 = restaurantMenuItemService.addRestaurantMenuItem(restaurant2.getId(), menuItem1.getId(), 80);
+        RestaurantMenuItem restaurantMenuItem6 = restaurantMenuItemService.addRestaurantMenuItem(restaurant2.getId(), menuItem2.getId(), 175);
 
         //Adding restaurant-3
-        Restaurant restaurant3 = restaurantService.addRestaurant("Chinese corner, ", "Banshankahree, Bangalore-560012","9876543215", new ArrayList<MenuItem>(), 1, 4.9);
-        menuItemService.addMenuItem(3, "Honey chilly potato", 40, "Sweet and salrty potato snacks");
-        menuItemService.addMenuItem(3, "French fries", 80, "quick bites with tomator ketchup");
-        menuItemService.addMenuItem(3, "Veg hakka noodles", 90, "pure veg noodles and a bit spicy");
-        menuItemService.addMenuItem(3, "Chcken noodles", 110, "Chicken noodles");
+        Restaurant restaurant3 = restaurantService.addRestaurant("R3", "Banshankharee, Bangalore-560001","9876543218", new HashMap<>(), 1, 4.9);
+        RestaurantMenuItem restaurantMenuItem7 = restaurantMenuItemService.addRestaurantMenuItem(restaurant3.getId(), menuItem3.getId(), 15);
+        RestaurantMenuItem restaurantMenuItem8 = restaurantMenuItemService.addRestaurantMenuItem(restaurant3.getId(), menuItem4.getId(), 30);
+        MenuItem menuItem5 = menuItemService.addMenuItem("Gobi manchurian", "Healthy chinese snacks");
+        RestaurantMenuItem restaurantMenuItem9 = restaurantMenuItemService.addRestaurantMenuItem(restaurant3.getId(), menuItem5.getId(), 150);
+        RestaurantMenuItem restaurantMenuItem10 = restaurantMenuItemService.addRestaurantMenuItem(restaurant3.getId(), menuItem2.getId(), 175);
 
-        System.out.println("Restaurant data loaded successfully. Kindly use print options to see the details. Kindly note the restaurant ids:"+
+       System.out.println("Restaurant data loaded successfully. Kindly use print options to see the details. Kindly note the restaurant ids:"+
                 Arrays.toString(new Long[]{restaurant1.getId(), restaurant2.getId(), restaurant3.getId()}));
     }
 }

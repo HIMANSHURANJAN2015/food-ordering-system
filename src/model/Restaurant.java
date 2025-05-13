@@ -1,14 +1,18 @@
 package model;
 
+import model.constant.RestaurantStatus;
+
 import java.util.List;
 
 public class Restaurant extends BaseModel {
     private String name;
     private String address;
     private String phone;
-    private List<MenuItem> menu;
     private double rating;//0-5
     private int maxNoOfOrders;
+    private RestaurantStatus restaurantStatus;
+    private List<RestaurantMenuItem> menuItems;
+    // Restaurant:MenuItem = N:M with prices of items varying across restaurant so stored in RestaurantMapping mapping table
 
     public String getName() {
         return name;
@@ -34,14 +38,6 @@ public class Restaurant extends BaseModel {
         this.phone = phone;
     }
 
-    public List<MenuItem> getMenu() {
-        return menu;
-    }
-
-    public void setMenu(List<MenuItem> menu) {
-        this.menu = menu;
-    }
-
     public double getRating() {
         return rating;
     }
@@ -56,5 +52,21 @@ public class Restaurant extends BaseModel {
 
     public void setMaxNoOfOrders(int maxNoOfOrders) {
         this.maxNoOfOrders = maxNoOfOrders;
+    }
+
+    public RestaurantStatus getRestaurantStatus() {
+        return restaurantStatus;
+    }
+
+    public void setRestaurantStatus(RestaurantStatus restaurantStatus) {
+        this.restaurantStatus = restaurantStatus;
+    }
+
+    public List<RestaurantMenuItem> getMenuItems() {
+        return menuItems;
+    }
+
+    public void setMenuItems(List<RestaurantMenuItem> menu) {
+        this.menuItems = menu;
     }
 }

@@ -2,9 +2,7 @@ package model;
 
 public class MenuItem extends BaseModel {
     private String name;
-    private double price;
     private String description;
-    private Restaurant restaurant;
 
     public String getName() {
         return name;
@@ -14,27 +12,11 @@ public class MenuItem extends BaseModel {
         this.name = name;
     }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
     }
 }

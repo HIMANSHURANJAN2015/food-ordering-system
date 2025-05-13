@@ -4,10 +4,12 @@ import model.constant.OrderStatus;
 
 import java.util.Map;
 
-public class Order {
+public class Order extends BaseModel {
     private Customer customer;
-    private Map<MenuItem, Integer> orderedItems;
+    private Map<RestaurantMenuItem, Integer> orderedItems;
     private OrderStatus orderStatus;
+    private double amount;
+    private Restaurant restaurant;
 
     public Customer getCustomer() {
         return customer;
@@ -17,11 +19,11 @@ public class Order {
         this.customer = customer;
     }
 
-    public Map<MenuItem, Integer> getOrderedItems() {
+    public Map<RestaurantMenuItem, Integer> getOrderedItems() {
         return orderedItems;
     }
 
-    public void setOrderedItems(Map<MenuItem, Integer> orderedItems) {
+    public void setOrderedItems(Map<RestaurantMenuItem, Integer> orderedItems) {
         this.orderedItems = orderedItems;
     }
 
@@ -31,5 +33,21 @@ public class Order {
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 }

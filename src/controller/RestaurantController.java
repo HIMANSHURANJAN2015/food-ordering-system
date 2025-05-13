@@ -1,25 +1,24 @@
 package controller;
 
-import model.MenuItem;
 import model.Restaurant;
 import service.RestaurantService;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class RestaurantController {
     private RestaurantService restaurantService;
-    private MenuItemController menuItemController;
+    private RestaurantMenuItemController restaurantMenuItemController;
     Scanner scanner;
 
-    public RestaurantController(RestaurantService restaurantService, MenuItemController menuItemController) {
+    public RestaurantController(RestaurantService restaurantService, RestaurantMenuItemController restaurantMenuItemController) {
         this.restaurantService = restaurantService;
-        this.menuItemController = menuItemController;
+        this.restaurantMenuItemController = restaurantMenuItemController;
         this.scanner = new Scanner(System.in);
     }
 
     public void addRestaurant() {
         try {
-            //Taking inputs
+            //Taking inputs for creating restaurant object
             System.out.println("Enter restaurant name: ");
             String name = scanner.nextLine();
             System.out.println("Enter restaurant address: ");
@@ -35,18 +34,16 @@ public class RestaurantController {
             int maximumNumberOfOrders = Integer.parseInt(scanner.nextLine());
             System.out.println("Enter rating of this restaurant: ");
             double rating = Double.parseDouble(scanner.nextLine());
-
-            //Creating restaurant object
-            Restaurant restaurant = restaurantService.addRestaurant(name, address, phone, new ArrayList<MenuItem>(), maximumNumberOfOrders, rating);
+            Restaurant restaurant = restaurantService.addRestaurant(name, address, phone, new HashMap<>(), maximumNumberOfOrders, rating);
             System.out.println("Restaurant added. Kindly note the id:"+restaurant.getId());
 
-            //Now ask owner to add as many menuItem as stated above.
+            //Calling RestaurantMenuItem controller for adding menu items. Calling it n times
             for(int i=1; i<=numberOfMenuItems; i++) {
                 System.out.println("Enter details of item-"+i);
-                this.menuItemController.addMenuItem();
+                this.restaurantMenuItemController.addRestaurantMenuItem();
             }
 
-            //printing restaurant details
+            //Printing restaurant details
             System.out.println("Restaurant successfully registered. Id: " + restaurant.getId());
             this.restaurantService.printRestaurant(restaurant.getId());
         } catch(Exception e) {

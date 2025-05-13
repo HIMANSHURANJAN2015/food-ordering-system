@@ -2,6 +2,8 @@ package utils;
 
 import model.MenuItem;
 import model.Restaurant;
+import model.RestaurantMenuItem;
+
 import java.util.List;
 
 public class RestaurantUtils {
@@ -27,9 +29,9 @@ public class RestaurantUtils {
 
         System.out.printf("|   %-74s   |\n", "Current menu items:");
         System.out.println(emptyLine);
-        List<MenuItem> menuItemList = restaurant.getMenu();
-        for(MenuItem menuItem : menuItemList) {
-            System.out.printf("|   %-74s   |\n", menuItem.getId() + "   " + menuItem.getName() + "   Rs " + menuItem.getPrice());
+        List<RestaurantMenuItem> menuItemList = restaurant.getMenuItems();
+        for(RestaurantMenuItem restaurantMenuItem : menuItemList) {
+            System.out.printf("|   %-74s   |\n", restaurantMenuItem.getId() + "   " + restaurantMenuItem.getMenuItem().getName() + "   Rs " + restaurantMenuItem.getPrice());
         }
         System.out.println(border); // Bottom border
     }

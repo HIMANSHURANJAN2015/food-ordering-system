@@ -21,4 +21,13 @@ public class MenuItemRepository {
     public Optional<MenuItem> findById(long id) {
         return Optional.ofNullable(menuItemMap.get(id));
     }
+
+    public Optional<MenuItem> findByName(String name) {
+        for(MenuItem menuItem : menuItemMap.values()) {
+            if(menuItem.getName().equalsIgnoreCase(name)) {
+                return Optional.of(menuItem);
+            }
+        }
+        return Optional.empty();
+    }
 }
