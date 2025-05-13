@@ -31,7 +31,7 @@ public class OrderController {
                 int quantity = Integer.parseInt(scanner.nextLine());
                 orderedMenuItemsIds.put(itemId, quantity);
             }
-            System.out.println("Enter Restaurant strategy type. Enter the correct sinle digit code: \n" +
+            System.out.println("Enter Restaurant strategy type. Enter the correct single digit code: \n" +
                     "1. LOWEST_COST \n"
                     +"2. HIGHEST_RATING \n");
             int choice = Integer.parseInt(scanner.nextLine());
@@ -41,9 +41,17 @@ public class OrderController {
             } else if(choice == 2) {
                 type = "HIGHEST_RATING";
             }
+            System.out.println("Do you want to allow order split ot get the best offers? Enter the correct sinle digit code: \n "+
+                    "1. Dont Allow order split \n"+
+                    "2. Allow order split");
+            choice = Integer.parseInt(scanner.nextLine());
+            boolean orderSplitAllowed = false;
+            if(choice == 2) {
+                orderSplitAllowed = true;
+            }
 
             //Calling order service
-            List<Order> orders = orderService.placeOrder(customerId, orderedMenuItemsIds, type);
+            List<Order> orders = orderService.placeOrder(customerId, orderedMenuItemsIds, type, orderSplitAllowed);
 
             //Printing the orders
             if(orders.size() > 1) {

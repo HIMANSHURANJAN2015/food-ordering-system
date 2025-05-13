@@ -26,7 +26,7 @@ public class OrderService {
         this.restaurantService = restaurantService;
     }
 
-    public List<Order> placeOrder(long customerId, HashMap<Long, Integer> orderedMenuItemsId, String strategy) {
+    public List<Order> placeOrder(long customerId, HashMap<Long, Integer> orderedMenuItemsId, String strategy, boolean orderSplitAllowed) {
         //Validating customerId and fetching customer object
         Optional<Customer> customerOpt = customerRepository.findById(customerId);
         if (customerOpt.isEmpty()) {
@@ -34,7 +34,7 @@ public class OrderService {
         }
         Customer customer = customerOpt.get();
 
-        //Calculating the stratehy to use for this order
+        //Calculating the strategy to use for this order
         RestaurantAssignmentType restaurantAssignmentType = DEFAULT_RESTAURANT_ASSIGNMENT_TYPE;
         try {
             restaurantAssignmentType = RestaurantAssignmentType.valueOf(strategy.toUpperCase()); // Case-insensitive conversion
@@ -45,8 +45,8 @@ public class OrderService {
 
 
         //Assigning order to a restaurant using user defined selection strategies
-        List<Restaurant> filteredRestaurants = restaurantService.findAllRestaurantsByAvailabilityAndMenuItems(new HashSet<>(orderedMenuItemsId.keySet()));
-        Map<Restaurant, Map<RestaurantMenuItem, Integer>> assignedRestaurantsMap = restaurantAssignmentStrategy.assignOrder(orderedMenuItemsId,filteredRestaurants);
+        List<Restaurant> filteredRestaurants = restaurantService.findAllRestaurantsByAvailabilityAndMenuItems(new HashSet<>(orderedMenuItemsId.keySet()), orderSplitAllowed);
+        Map<Restaurant, Map<RestaurantMenuItem, Integer>> assignedRestaurantsMap = restaurantAssignmentStrategy.assignOrder(orderedMenuItemsId,filteredRestaurants, orderSplitAllowed);
         if(assignedRestaurantsMap.isEmpty()) {
             throw new NoAvailableRestaurantFoundException("All our restaurants are currently busy. Kindly try after some time");
         }

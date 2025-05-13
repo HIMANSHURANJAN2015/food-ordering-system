@@ -8,9 +8,6 @@ import model.Restaurant;
 import model.RestaurantMenuItem;
 import repository.*;
 import service.*;
-import service.strategy.restuarantAssignmentStrategy.LowestPriceAssignmentStrategy;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;

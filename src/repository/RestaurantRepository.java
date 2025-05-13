@@ -24,7 +24,7 @@ public class RestaurantRepository {
     }
 
     //public List<Restaurant> findAllRestaurantsByAvailabilityAndMenuItems(HashSet<Long> menuItemIds) {
-    public List<Restaurant> findAllRestaurantsByAvailabilityAndMenuItems(HashSet<Long> inputItemIds) {
+    public List<Restaurant> findAllRestaurantsByAvailabilityAndMenuItems(HashSet<Long> inputItemIds, boolean orderSplitAllowed) {
         List<Restaurant> filteredRestaurants = new ArrayList<>();
         for(long restaurantId : restaurantMap.keySet()) {
             Restaurant restaurant = restaurantMap.get(restaurantId);
@@ -38,7 +38,11 @@ public class RestaurantRepository {
                     outputItemIds.add(menuItem);
                 }
             }
-            if(inputItemIds.size() == outputItemIds.size()) {
+            if(!orderSplitAllowed && inputItemIds.size() == outputItemIds.size()) {
+                //since order split is not alowed, hence all items must be present in the restaurant
+                filteredRestaurants.add(restaurant);
+            } else if(outputItemIds.size() > 0){
+                //means this restaurant serves atleaat 1 of the order, so can be helpful if we are splittign order
                 filteredRestaurants.add(restaurant);
             }
         }

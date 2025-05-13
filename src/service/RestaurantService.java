@@ -57,8 +57,8 @@ public class RestaurantService {
         RestaurantUtils.print(restaurantOpt.get());
     }
 
-    public List<Restaurant> findAllRestaurantsByAvailabilityAndMenuItems(HashSet<Long> menuItemIds) {
-        return restuarantRepo.findAllRestaurantsByAvailabilityAndMenuItems(menuItemIds);
+    public List<Restaurant> findAllRestaurantsByAvailabilityAndMenuItems(HashSet<Long> menuItemIds, boolean orderSplitAllowed) {
+        return restuarantRepo.findAllRestaurantsByAvailabilityAndMenuItems(menuItemIds, orderSplitAllowed);
     }
 
     public void orderAssigned(Restaurant restaurant, Order order) {
