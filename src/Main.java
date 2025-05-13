@@ -54,6 +54,8 @@ public class Main {
                         "6 = Add new customer \n " +
                         "7 = Get all menu items \n " +
                         "8 = Place order \n " +
+                        "9 = Print order \n " +
+                        "10 = Complete order \n " +
                         "0 = Exit");
                 choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
@@ -80,6 +82,12 @@ public class Main {
                         break;
                     case 8:
                         orderController.placeOrder();
+                        break;
+                    case 9:
+                        orderController.printOrder();
+                        break;
+                    case 10:
+                        orderController.completeOrder();
                         break;
                     case 0:
                         break;

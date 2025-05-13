@@ -84,14 +84,17 @@ public class OrderService {
         RestaurantUtils.print(orderOpt.get());
     }
 
+    public Order completeOrder(long orderId) {
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if(orderOpt.isEmpty()) {
+            throw new OrderNotFoundException("Order with id = "+ orderId+" not found");
+        }
+        Order order = orderOpt.get();
+        order.setOrderStatus(OrderStatus.COMPLETED);
+        order = orderRepository.save(order);
 
+        //Freeing space of restaurant
+        restaurantService.orderCompleted(order.getRestaurant(), order);
+        return order;
+    }
 }
-
-/*
-  dosa -2
-  idli 3
-
-  I need to fin all restaurant which can cook all items && isAvailable
-  From it I will select restaurnt whihc has lowest cost or best rating
-
- */

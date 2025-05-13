@@ -58,4 +58,24 @@ public class OrderController {
         }
     }
 
+    public void printOrder() {
+        try {
+            System.out.println("Enter order ID");
+            long orderId = Long.parseLong(scanner.nextLine());
+            orderService.printOrder(orderId);
+        } catch(Exception e) {
+            System.out.println("OOPSSS!! Failed to print order. Error:"+e.getMessage());
+        }
+    }
+
+    public void completeOrder() {
+        try {
+            System.out.println("Enter order ID");
+            long orderId = Long.parseLong(scanner.nextLine());
+            orderService.completeOrder(orderId);
+            System.out.println("Order completed successfully. Kindly note the id for future reference."+orderId);
+        } catch(Exception e) {
+            System.out.println("OOPSSS!! Failed to complete order. Error:"+e.getMessage());
+        }
+    }
 }

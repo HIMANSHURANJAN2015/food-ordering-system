@@ -71,4 +71,15 @@ public class RestaurantService {
         }
         restuarantRepo.save(restaurant);
     }
+
+    public void orderCompleted(Restaurant restaurant, Order order) {
+        List<Order> underProcessingOrders = restaurant.getProcessingOrders();
+        underProcessingOrders.remove(order);
+        restaurant.setProcessingOrders(underProcessingOrders);
+        if(underProcessingOrders.size() < restaurant.getMaxNoOfOrders()) {
+            System.out.println("Restaurant + "+restaurant.getName() + " is back");
+            restaurant.setRestaurantStatus(RestaurantStatus.AVAILABLE);
+        }
+        restuarantRepo.save(restaurant);
+    }
 }

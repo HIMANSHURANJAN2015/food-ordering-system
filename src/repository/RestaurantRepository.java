@@ -31,7 +31,6 @@ public class RestaurantRepository {
             if(restaurant.getRestaurantStatus() != RestaurantStatus.AVAILABLE) {
                 continue;
             }
-            System.out.println("Checing restairanrt"+restaurantId);
             //Now checking what all items this restaurant can service
             List<RestaurantMenuItem> outputItemIds = new ArrayList<>();
             for(RestaurantMenuItem menuItem : restaurant.getMenuItems()) {
