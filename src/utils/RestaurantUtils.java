@@ -1,6 +1,7 @@
 package utils;
 
 import model.MenuItem;
+import model.Order;
 import model.Restaurant;
 import model.RestaurantMenuItem;
 
@@ -23,6 +24,7 @@ public class RestaurantUtils {
         System.out.printf("|   %-74s   |\n", "Restaurant Phone : " + restaurant.getPhone());
         System.out.printf("|   %-74s   |\n", "Restaurant rating(out of 5) : " + restaurant.getRating());
         System.out.printf("|   %-74s   |\n", "Maximum number of orders : " + restaurant.getMaxNoOfOrders());
+        System.out.printf("|   %-74s   |\n", "Restaurant status : " + restaurant.getRestaurantStatus());
 
         System.out.println(border); // Divider border
 
@@ -32,12 +34,22 @@ public class RestaurantUtils {
         for(RestaurantMenuItem restaurantMenuItem : menuItemList) {
             System.out.printf("|   %-74s   |\n", restaurantMenuItem.getId() + "   " + restaurantMenuItem.getMenuItem().getName() + "   Rs " + restaurantMenuItem.getPrice());
         }
+        System.out.println(border); // Divider border
+
+        System.out.printf("|   %-74s   |\n", "Current Processing Orders:");
+        System.out.println(emptyLine);
+        for(Order order: restaurant.getProcessingOrders()) {
+            System.out.printf("| %-4s | %-15s |  %-52s |\n",
+                    order.getId(),
+                    order.getCustomer().getName(),
+                    order.orderItemsToString());
+        }
+
         System.out.println(border); // Bottom border
     }
 
     public static void print(List<MenuItem> menuitems) {
         System.out.println(border); // Top border
-
         System.out.println(emptyLine);
         System.out.printf("|   %-74s   |\n", "Here are the Food menu list");
         System.out.println(emptyLine);
@@ -50,5 +62,21 @@ public class RestaurantUtils {
         }
         System.out.println(border);
 
+    }
+
+    public static void print(Order order) {
+        System.out.println(border); // Top border
+        System.out.println(emptyLine);
+        System.out.printf("|   %-74s   |\n", "Here are the order details");
+        System.out.println(emptyLine);
+        System.out.println(border);
+        System.out.printf("|   %-74s   |\n", "Order ID  : " + order.getId());
+        System.out.printf("|   %-74s   |\n", "Customer NAME: " + order.getCustomer().getName());
+        System.out.printf("|   %-74s   |\n", "Restaurant NAME: " + order.getRestaurant().getName());
+        System.out.printf("|   %-74s   |\n", "Ordered Items: " + order.orderItemsToString());
+        System.out.printf("|   %-74s   |\n", "Order Amount: Rs " + order.getAmount());
+        System.out.printf("|   %-74s   |\n", "Restaurant Assignmentstratgey : " + order.getAssignmentType());
+        System.out.printf("|   %-74s   |\n", "Order Status : " + order.getOrderStatus());
+        System.out.println(border);//bottom border
     }
 }

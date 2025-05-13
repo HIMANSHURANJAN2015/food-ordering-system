@@ -63,7 +63,11 @@ public class RestaurantMenuItemController {
     }
 
     public void getAllMenuItemsAcrossRestaurant() {
-        List<MenuItem> menuItems = menuItemService.getAllMenuItems();
-        RestaurantUtils.print(menuItems);
+        try {
+            List<MenuItem> menuItems = menuItemService.getAllMenuItems();
+            RestaurantUtils.print(menuItems);
+        } catch(Exception e) {
+            System.out.println("OOPS!! Failed to get all menu items error: "+ e.getMessage());
+        }
     }
 }

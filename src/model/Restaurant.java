@@ -12,6 +12,7 @@ public class Restaurant extends BaseModel {
     private int maxNoOfOrders;
     private RestaurantStatus restaurantStatus;
     private List<RestaurantMenuItem> menuItems;
+    private List<Order> processingOrders;
     // Restaurant:MenuItem = N:M with prices of items varying across restaurant so stored in RestaurantMapping mapping table
 
     public String getName() {
@@ -68,5 +69,13 @@ public class Restaurant extends BaseModel {
 
     public void setMenuItems(List<RestaurantMenuItem> menu) {
         this.menuItems = menu;
+    }
+
+    public List<Order> getProcessingOrders() {
+        return processingOrders;
+    }
+
+    public void setProcessingOrders(List<Order> processingOrders) {
+        this.processingOrders = processingOrders;
     }
 }

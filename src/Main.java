@@ -1,11 +1,14 @@
 import controller.CustomerController;
+import controller.OrderController;
 import controller.RestaurantController;
 import controller.RestaurantMenuItemController;
+import model.Customer;
 import model.MenuItem;
 import model.Restaurant;
 import model.RestaurantMenuItem;
 import repository.*;
 import service.*;
+import service.strategy.restuarantAssignmentStrategy.LowestPriceAssignmentStrategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,14 +32,13 @@ public class Main {
         MenuItemService menuItemService = new MenuItemService(menuItemRepository);
         RestaurantMenuItemService restaurantMenuItemService = new RestaurantMenuItemService(restaurantMenuItemRepository, restaurantRepository, menuItemRepository);
         RestaurantService restaurantService = new RestaurantService(restaurantRepository, restaurantMenuItemService);
-        OrderService orderService = new OrderService(orderRepository, customerRepository);
-
+        OrderService orderService = new OrderService(orderRepository, customerRepository, restaurantService);
 
 
         CustomerController customerController = new CustomerController(customerService);
         RestaurantMenuItemController restaurantMenuItemController = new RestaurantMenuItemController(restaurantMenuItemService, menuItemService);
         RestaurantController restaurantController = new RestaurantController(restaurantService, restaurantMenuItemController);
-
+        OrderController orderController = new OrderController(orderService);
 
 
         Scanner scanner = new Scanner(System.in);
@@ -45,12 +47,13 @@ public class Main {
             while (choice != 0) {
                 System.out.println("Enter the choice code \n " +
                         "1 = Register a new Restaurant(with all details) \n " +
-                        "2 = Auto-Register a new restaurant(with dummy data) \n " +
+                        "2 = Auto-Register a new restaurant(with dummy data) and customer data \n " +
                         "3 = Print a restaurant \n " +
                         "4 = Add menu item \n " +
                         "5 = Update menu item \n " +
                         "6 = Add new customer \n " +
                         "7 = Get all menu items \n " +
+                        "8 = Place order \n " +
                         "0 = Exit");
                 choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
@@ -58,7 +61,7 @@ public class Main {
                         restaurantController.addRestaurant();
                         break;
                     case 2:
-                        loadRestaurantDetails(restaurantService, restaurantMenuItemService, menuItemService);
+                        loadRestaurantDetails(restaurantService, restaurantMenuItemService, menuItemService, customerService);
                         break;
                     case 3:
                         restaurantController.printRestaurant();
@@ -75,6 +78,9 @@ public class Main {
                     case 7:
                         restaurantMenuItemController.getAllMenuItemsAcrossRestaurant();
                         break;
+                    case 8:
+                        orderController.placeOrder();
+                        break;
                     case 0:
                         break;
                     default:
@@ -86,7 +92,7 @@ public class Main {
         }
     }
 
-    private static void loadRestaurantDetails(RestaurantService restaurantService, RestaurantMenuItemService restaurantMenuItemService, MenuItemService menuItemService) {
+    private static void loadRestaurantDetails(RestaurantService restaurantService, RestaurantMenuItemService restaurantMenuItemService, MenuItemService menuItemService, CustomerService customerService) {
         //Adding restaurant-1
         Restaurant restaurant1 = restaurantService.addRestaurant("R1", "WEst Patel Nagar, New Delhi-110008","9876543213", new HashMap<>(), 5, 4.5);
         MenuItem menuItem1 = menuItemService.addMenuItem("Veg biryani", "Delicious marinated veg biryani with raita");
@@ -113,5 +119,12 @@ public class Main {
 
        System.out.println("Restaurant data loaded successfully. Kindly use print options to see the details. Kindly note the restaurant ids:"+
                 Arrays.toString(new Long[]{restaurant1.getId(), restaurant2.getId(), restaurant3.getId()}));
+
+       //Adding 4 customers
+        Customer customer1 = customerService.createCustomer("Ashwin", "9876565678", "BTM 2nd stage");
+        Customer customer2 = customerService.createCustomer("Harish", "8976565678", "Tilak nagar");
+        Customer customer3 = customerService.createCustomer("Shruti", "9876995678", "Karol bagh");
+        Customer customer4 = customerService.createCustomer("Diya", "98765654578", "White field");;
+
     }
 }

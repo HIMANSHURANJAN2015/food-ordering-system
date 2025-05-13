@@ -1,46 +1,90 @@
 package service;
 
 import exception.CustomerNotFoundException;
-import model.Customer;
-import model.MenuItem;
-import model.Order;
-import model.Restaurant;
+import exception.NoAvailableRestaurantFoundException;
+import exception.OrderNotFoundException;
+import model.*;
+import model.constant.OrderStatus;
+import model.constant.RestaurantAssignmentType;
 import repository.CustomerRepository;
 import repository.OrderRepository;
+import service.strategy.restuarantAssignmentStrategy.RestaurantAssignmentStrategy;
+import service.strategy.restuarantAssignmentStrategy.RestaurantAssignmentStrategyFactory;
+import utils.RestaurantUtils;
 
 import java.util.*;
 
 public class OrderService {
     private OrderRepository orderRepository;
     private CustomerRepository customerRepository;
+    private RestaurantService restaurantService;
+    private final RestaurantAssignmentType DEFAULT_RESTAURANT_ASSIGNMENT_TYPE = RestaurantAssignmentType.LOWEST_COST;
 
-    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository) {
+    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, RestaurantService restaurantService) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
+        this.restaurantService = restaurantService;
     }
 
-    public Order placeOrder(long customerId, HashMap<String, Integer> orderedItemsByName) {
-        //Validating customer
+    public List<Order> placeOrder(long customerId, HashMap<Long, Integer> orderedMenuItemsId, String strategy) {
+        //Validating customerId and fetching customer object
         Optional<Customer> customerOpt = customerRepository.findById(customerId);
         if (customerOpt.isEmpty()) {
             throw new CustomerNotFoundException("Customer not found");
         }
         Customer customer = customerOpt.get();
 
-        //Assigning order to a restaurant using selection strategies
-        Restaurant restaurant = new Restaurant();
-        Map<MenuItem, Integer> orderedItems = new HashMap<>();
-        double amount = 0;
+        //Calculating the stratehy to use for this order
+        RestaurantAssignmentType restaurantAssignmentType = DEFAULT_RESTAURANT_ASSIGNMENT_TYPE;
+        try {
+            restaurantAssignmentType = RestaurantAssignmentType.valueOf(strategy.toUpperCase()); // Case-insensitive conversion
+        } catch (IllegalArgumentException e) {
+            System.out.println("Warning: Invalid strategy type: " + strategy);
+        }
+        RestaurantAssignmentStrategy restaurantAssignmentStrategy = RestaurantAssignmentStrategyFactory.getRestaurantAssignmentStrategy(restaurantAssignmentType);
 
-        //Creating Order object
-        Order order = new Order();
-        order.setCustomer(customer);
-        //order.setOrderedItems(orderedItems);
-        order.setAmount(amount);
-        order.setRestaurant(restaurant);
-        order = orderRepository.save(order);
-        return order;
+
+        //Assigning order to a restaurant using user defined selection strategies
+        List<Restaurant> filteredRestaurants = restaurantService.findAllRestaurantsByAvailabilityAndMenuItems(new HashSet<>(orderedMenuItemsId.keySet()));
+        Map<Restaurant, Map<RestaurantMenuItem, Integer>> assignedRestaurantsMap = restaurantAssignmentStrategy.assignOrder(orderedMenuItemsId,filteredRestaurants);
+        if(assignedRestaurantsMap.isEmpty()) {
+            throw new NoAvailableRestaurantFoundException("All our restaurants are currently busy. Kindly try after some time");
+        }
+
+        //Calculating amount and placing order
+        List<Order> orders = new ArrayList<>();
+        for(Restaurant restaurant : assignedRestaurantsMap.keySet()) {
+            double amount = 0;
+            Map<RestaurantMenuItem, Integer> orderedItemsMapFromThisRestaurant = assignedRestaurantsMap.get(restaurant);
+            for(RestaurantMenuItem restaurantMenuItem : orderedItemsMapFromThisRestaurant.keySet()) {
+                int quantity = orderedItemsMapFromThisRestaurant.get(restaurantMenuItem);
+                amount += (quantity * restaurantMenuItem.getPrice());
+            }
+            Order order = new Order();
+            order.setCustomer(customer);
+            order.setRestaurant(restaurant);
+            order.setOrderedItems(orderedItemsMapFromThisRestaurant);
+            order.setAmount(amount);
+            order.setAssignmentType(restaurantAssignmentType);
+            order.setOrderStatus(OrderStatus.ACCEPTED);
+            order = orderRepository.save(order);
+            orders.add(order);
+
+            //Updating status of Restaurant
+            restaurantService.orderAssigned(restaurant, order);
+        }
+        return orders;
     }
+
+    public void printOrder(long orderId) {
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if(orderOpt.isEmpty()) {
+            throw new OrderNotFoundException("Order with id = "+ orderId+" not found");
+        }
+        RestaurantUtils.print(orderOpt.get());
+    }
+
+
 }
 
 /*
