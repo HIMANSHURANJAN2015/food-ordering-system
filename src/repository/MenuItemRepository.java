@@ -2,9 +2,7 @@ package repository;
 
 import model.MenuItem;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MenuItemRepository {
     private Map<Long, MenuItem> menuItemMap = new HashMap<>();
@@ -29,5 +27,9 @@ public class MenuItemRepository {
             }
         }
         return Optional.empty();
+    }
+
+    public List<MenuItem> findAll() {
+        return new ArrayList<>(menuItemMap.values());
     }
 }

@@ -4,6 +4,9 @@ import model.MenuItem;
 import model.RestaurantMenuItem;
 import service.MenuItemService;
 import service.RestaurantMenuItemService;
+import utils.RestaurantUtils;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class RestaurantMenuItemController {
@@ -57,5 +60,10 @@ public class RestaurantMenuItemController {
         } catch(Exception e){
             System.out.println("OOPS!! Failed to update menu item Error: "+ e.getMessage());
         }
+    }
+
+    public void getAllMenuItemsAcrossRestaurant() {
+        List<MenuItem> menuItems = menuItemService.getAllMenuItems();
+        RestaurantUtils.print(menuItems);
     }
 }

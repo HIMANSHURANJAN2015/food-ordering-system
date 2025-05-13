@@ -7,11 +7,10 @@ import model.RestaurantMenuItem;
 import java.util.List;
 
 public class RestaurantUtils {
+    private static String border = "|------------------------------------------------------------------------------|";
+    private static String emptyLine = "|                                                                              |";
 
     public static void print(Restaurant restaurant) {
-        String border = "|------------------------------------------------------------------------------|";
-        String emptyLine = "|                                                                              |";
-
         System.out.println(border); // Top border
 
         System.out.println(emptyLine);
@@ -34,5 +33,22 @@ public class RestaurantUtils {
             System.out.printf("|   %-74s   |\n", restaurantMenuItem.getId() + "   " + restaurantMenuItem.getMenuItem().getName() + "   Rs " + restaurantMenuItem.getPrice());
         }
         System.out.println(border); // Bottom border
+    }
+
+    public static void print(List<MenuItem> menuitems) {
+        System.out.println(border); // Top border
+
+        System.out.println(emptyLine);
+        System.out.printf("|   %-74s   |\n", "Here are the Food menu list");
+        System.out.println(emptyLine);
+        System.out.println(border);
+        for(MenuItem menuItem : menuitems) {
+            System.out.printf("| %-4s | %-20s |  %-47s |\n",
+                    menuItem.getId(),
+                    menuItem.getName(),
+                    menuItem.getDescription());
+        }
+        System.out.println(border);
+
     }
 }

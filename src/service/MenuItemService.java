@@ -2,6 +2,8 @@ package service;
 
 import model.MenuItem;
 import repository.MenuItemRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 public class MenuItemService {
@@ -21,5 +23,9 @@ public class MenuItemService {
         menuItem.setName(name);
         menuItem.setDescription(description);
         return menuItemRepository.save(menuItem);
+    }
+
+    public List<MenuItem> getAllMenuItems() {
+        return menuItemRepository.findAll();
     }
 }

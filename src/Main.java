@@ -50,6 +50,7 @@ public class Main {
                         "4 = Add menu item \n " +
                         "5 = Update menu item \n " +
                         "6 = Add new customer \n " +
+                        "7 = Get all menu items \n " +
                         "0 = Exit");
                 choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
@@ -70,6 +71,9 @@ public class Main {
                         break;
                     case 6:
                         customerController.addCustomer();
+                        break;
+                    case 7:
+                        restaurantMenuItemController.getAllMenuItemsAcrossRestaurant();
                         break;
                     case 0:
                         break;
